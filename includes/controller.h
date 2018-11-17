@@ -6,16 +6,20 @@
 #define FILE_CLIENT_CONTROLLER_H
 
 #include <string>
-#include <iostream>
 #include <thread>
+#include <SFML/System.hpp>
+
+#include "utilities.h"
 
 class cmdController{
 
 private:
+    bool isRunning;
     void putAllert();
     void putLog();
     void putMessage();
-    void parseCommand(std::thread);
+    void parseCommand(std::string);
+    void getCommand();
 
 public:
     cmdController(std::string);
