@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <iostream>
+#include <vector>
 
 namespace util{
 
@@ -52,6 +53,37 @@ namespace util{
     #endif
 
         return mappedArgs;
+
+    }
+    static std::vector<std::string> parseCommandLine(std::string commandLine){
+
+        std::vector<std::string> commandArgs;
+        std::size_t lastPos = 0;
+        std::size_t aktPos = 0;
+
+        do{
+
+            aktPos = commandLine.find(' ', lastPos+1);
+            commandArgs.push_back(commandLine.substr(lastPos, aktPos-lastPos));
+            lastPos = aktPos+1;
+
+        }while (aktPos != std::string::npos);
+
+        util::toUpperCase(commandArgs[0]);
+
+#ifdef DEBUG
+
+        std::cout << "command args: " << std::endl;
+
+        for(std::string s : commandArgs){
+            std::cout << s << std::endl;
+        }
+
+        std::cout << "end of command args" << std::endl;
+
+#endif
+
+        return commandArgs;
 
     }
 

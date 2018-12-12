@@ -6,14 +6,15 @@
 #define FILE_CLIENT_CONTROLLER_H
 
 #include <string>
-#include <thread>
 #include <SFML/System.hpp>
+#include <unordered_map>
 
 #include "utilities.h"
 
 class cmdController{
 
 private:
+    std::unordered_map<std::string, std::string> arguments;
     bool isRunning;
     void putAllert();
     void putLog();
@@ -22,7 +23,7 @@ private:
     void getCommand();
 
 public:
-    cmdController(std::string);
+    cmdController(std::string connectionMode, std::unordered_map<std::string, std::string> arguments);
 
 };
 
