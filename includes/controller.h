@@ -22,6 +22,7 @@ private:
     void parseCommand(std::string);
     void getCommand();
 
+
 public:
     cmdController(std::string connectionMode, std::unordered_map<std::string, std::string> arguments);
 

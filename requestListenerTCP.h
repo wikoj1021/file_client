@@ -7,11 +7,12 @@
 
 #include "requestListener.h"
 
+
 class RequestListenerTCP :public RequestListener{
 
 private:
     sf::Thread* listeningThread;
-    void parseRequest(std::string request);
+    serverCommands parseRequest(std::vector<std::string>* requestVector, std::string request);
     void listen();
 
 public:

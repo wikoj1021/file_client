@@ -16,7 +16,8 @@ private:
 public:
     static void makeParts(std::string fileName);
     static void mergeParts(std::string dir, std::string basename, std::string filename);
-
+    static std::string getPart(std::string fileName, fpos_t size, fpos_t startPoint);
+    static int64_t getFile(std::string fileName, char **buf);
 };
 
 

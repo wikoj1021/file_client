@@ -7,13 +7,20 @@
 
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
+#include "fileUtils.h"
+
+enum serverCommands{
+    NOT_IMPLEMENTED,
+    PUSH,
+    PULL
+};
 
 class RequestListener {
 
 protected:
     sf::Thread *requestListener;
     unsigned short port;
-    virtual void parseRequest(std::string request) = 0;
+    virtual serverCommands parseRequest(std::vector<std::string>* requestVector, std::string request) = 0;
 
 public:
     virtual bool startListening(unsigned short port) = 0;

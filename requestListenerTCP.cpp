@@ -4,6 +4,8 @@
 
 #include "requestListenerTCP.h"
 #include <iostream>
+#include <fstream>
+#include "includes/utilities.h"
 
 
 RequestListenerTCP::RequestListenerTCP() {
@@ -34,17 +36,67 @@ void RequestListenerTCP::listen() {
 
         uint8_t data[128];
         size_t recived;
-
+        std::fstream file;
+        std::string commandStr;
+        std::vector<std::string> requestVector;
+        std::string fileDir;
         sf::Socket::Status status = listener.accept(client);
+        char* fileBuf = nullptr;
+
+
         if(status == sf::Socket::Status::Done){
-            client.receive(data, sizeof(data), recived);
+            char c = 0;
+            std::cout << "status: " << status << std::endl;
 
-            //std::string()
+            client.receive(&c, sizeof(c), recived);
+            while(c != '\n'){
+                commandStr += c;
+                client.receive(&c, sizeof(c), recived);
+            };
 
-            //parseRequest();
+            serverCommands command = parseRequest(&requestVector, commandStr);
 
-            std::cout << data << std::endl;
-            std::cout << "recived: " << recived << std::endl;
+            switch (command) {
+                case PUSH:
+                    fileDir = "received/"+requestVector.at(1);
+
+                    std::cout << fileDir << std::endl;
+
+                    file.open(fileDir, std::fstream::out | std::fstream::binary);
+
+                    if(!file.good()){
+                        std::cout << "not opened filename " << fileDir << std::endl;
+                    }
+
+                    while (sf::Socket::Status::Done == (status = client.receive(data, sizeof(data), recived))) {
+
+                        std::cout << "status: " << status << std::endl;
+                        std::cout << "data: " << std::endl;
+                        std::cout << data << std::endl;
+
+                        file.write((char*)data, sizeof(data));
+
+                    }
+
+                    file.close();
+
+                    std::cout << data << std::endl;
+                    std::cout << "recived: " << recived << std::endl;
+                    break;
+
+                case PULL:
+                    fileDir = "received/"+requestVector.at(1);
+
+                    fileUtils::getFile(fileDir, &fileBuf);
+
+                    client.send(fileBuf, sizeof(fileBuf));
+
+                    break;
+                default:
+
+                    break;
+
+            }
         }
     }
 
@@ -65,8 +117,15 @@ bool RequestListenerTCP::startListening(unsigned short port) {
     return true;
 }
 
-void RequestListenerTCP::parseRequest(std::string request) {
+serverCommands RequestListenerTCP::parseRequest(std::vector<std::string>* requestVector, std::string request) {
+    std::cout << "parsing request: " << request << std::endl;
 
+    *requestVector = util::parseCommandLine(request);
 
+    if("PUSH" == requestVector->at(0))
+        return PUSH;
+    else if("PULL" == requestVector->at(0))
+        return PULL;
 
+    return NOT_IMPLEMENTED;
 }
